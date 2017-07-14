@@ -159,6 +159,18 @@ public class RNGooglePlacesModule extends ReactContextBaseJavaModule implements 
                 }
                 map.putArray("types", Arguments.fromArray(types.toArray(new String[0])));
 
+                try {
+                    Geocoder geo = new Geocoder(this.reactContext.getApplicationContext(), Locale.getDefault());
+                    List<Address> addresses = geo.getFromLocation(place.getLatLng().latitude, place.getLatLng().longitude, 1);
+                    if (addresses.size() > 0) {
+//                        addresses.setText(addresses.get(0).getFeatureName() + ", " + addresses.get(0).getLocality() + ", " + addresses.get(0).getAdminArea() + ", " + addresses.get(0).getCountryName());
+                        map.putString("city", addresses.get(0).getLocality());
+                        map.putString("administrative_area_level_1", addresses.get(0).getAdminArea());
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace(); // getFromLocation() may sometimes fail
+                }
+
 
                 resolvePromise(map);
             }
